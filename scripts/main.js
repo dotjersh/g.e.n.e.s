@@ -10,9 +10,44 @@ window.onload = function(){
 
   run();
 
+  //update questions menu
+  fillQuestions();
+
+  //tooltips
+  $('tbody input').tooltip();
+
+  //loading finished
+  setTimeout(function(){
+    $('#loading').addClass('complete');
+    $('.banner').addClass('complete');
+    $('body').addClass('nomargin');
+  },500);
+
+  //halfway through removal of the loading overlay, show help
+  setTimeout(function(){
+    $('.help').tooltip("show");
+  },1000);
+
+  requestAnimationFrame(graphics);
+}
+
+//render loop
+function graphics(){
+  render(geno.child);
+  requestAnimationFrame(graphics);
+}
+
+//upon click
+function run(){
+  gather();
+  decifer();
+  displayChild();
+}
+
+//puts questions in modal
+function fillQuestions(){
   var output = "";
 
-  //update questions menu
   for(var key in pheno){
     if (!pheno.hasOwnProperty(key)) continue; //skip array methods
 
@@ -38,32 +73,16 @@ window.onload = function(){
 
   $('.questionsLanding').html(output);
 
-  $('body').click(function(){
-    $('.help').tooltip("destroy");
+  //activate the first button in each
+  $('.answer .btn:first-child').each(function(){
+    $(this).addClass('btn-info');
   });
 
-  setTimeout(function(){
-    $('#loading').addClass('complete');
-    $('body').addClass('nomargin');
-  },500);
-
-  setTimeout(function(){
-    $('.help').tooltip("show");
-    render(geno.child);
-  },1000);
-
-  requestAnimationFrame(graphics);
-}
-
-function graphics(){
-  render(geno.child);
-  requestAnimationFrame(graphics);
-}
-
-function run(){
-  gather();
-  decifer();
-  displayChild();
+  //event for clicking
+  $('.btn').click(function(){
+    $(this).parent().children().removeClass('btn-info');
+    $(this).addClass('btn-info');
+  });
 }
 
 function table(){
@@ -71,7 +90,7 @@ function table(){
 
   for(var key in pheno){
     if (!pheno.hasOwnProperty(key)) continue; //skip array methods
-    output = output + "<tr><td><input class='" + key + "-dad' value='" + pheno[key].genes[0].gene[0] + "' maxlength='" + pheno[key].genes[0].gene[0].length + "'></input></td><td><input class='" + key + "-mom' value='" + pheno[key].genes[0].gene[0] + "' maxlength='" + pheno[key].genes[0].gene[0].length + "'></input></td><td><input class='" + key + "-child' readonly></input></td><th class='key " + key + "-key'>" + pheno[key].name + "</th></tr>";
+    output = output + "<tr><td><input title='" + pheno[key].name + "' class='" + key + "-dad' value='" + pheno[key].genes[0].gene[0] + "' maxlength='" + pheno[key].genes[0].gene[0].length + "'></input></td><td><input title='" + pheno[key].name + "' class='" + key + "-mom' value='" + pheno[key].genes[0].gene[0] + "' maxlength='" + pheno[key].genes[0].gene[0].length + "'></input></td><td><input title='" + pheno[key].name + "' class='" + key + "-child' readonly></input></td><th class='key " + key + "-key'>" + pheno[key].name + "</th></tr>";
   }
 
   $('tbody').html(output);
@@ -92,6 +111,7 @@ function displayChild(){
   }
 }
 
+//Events
 function events(){
   $('#save').click(function(){
     window.open(canvas.toDataURL('image/png'));
@@ -113,16 +133,22 @@ function events(){
     activeParent = 'dad';
   });
 
-  $('#clear').click(function(){location.reload()});
   $('#random').click(function(){
     decifer();
     displayChild();
-    render(geno.child);
   });
 
   window.onkeyup = function(){
     run();
   };
+
+  $('body').click(function(){
+    $('.help').tooltip("destroy");
+  });
+
+  $('#dnaButton').click(function(){
+    $('#dnaResults').html(geno.child);
+  });
 }
 
 function toText(){
@@ -233,7 +259,11 @@ function render(geno){
 }
 
 function lay(src){
-  ctx.drawImage(searchIMG(src),0,0,image.size,image.size,0,0,image.display,image.display);
+  try {
+    ctx.drawImage(searchIMG(src),0,0,image.size,image.size,0,0,image.display,image.display);
+  } catch(e){
+    console.log(e);
+  }
 }
 
 function flip(var1,var2){
