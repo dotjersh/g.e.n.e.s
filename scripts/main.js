@@ -21,11 +21,16 @@ window.onload = function(){
     $('#loading').addClass('complete');
     $('.banner').addClass('complete');
     $('body').addClass('nomargin');
+    //set mom to female
+    parent = geno.mom;
+    activeParent = 'mom';
+    select('XX','sex');
   },500);
 
   //halfway through removal of the loading overlay, show help
   setTimeout(function(){
     $('.help').tooltip("show");
+    $('.banner').remove();
   },1000);
 
   requestAnimationFrame(graphics);
@@ -59,7 +64,7 @@ function fillQuestions(){
         alleles = alleles + `<span class="badge">` + pheno[key].genes[i].gene[i2] + `</span>`;
       }
 
-      genes = genes + `<button class="btn btn-default" onclick="select('` + pheno[key].genes[i].gene[0] + `','` + key +`');" type="button"><span class="alleles"> ` + alleles +` </span> ` + pheno[key].genes[i].name + ` </button>`;
+      genes = genes + `<button class="btn key-` + pheno[key].genes[i].gene[0] + ` btn-default" onclick="select('` + pheno[key].genes[i].gene[0] + `','` + key +`');" type="button"><span class="alleles"> ` + alleles +` </span> ` + pheno[key].genes[i].name + ` </button>`;
     }
 
     output = output + `
@@ -83,6 +88,11 @@ function fillQuestions(){
     $(this).parent().children().removeClass('btn-info');
     $(this).addClass('btn-info');
   });
+
+  //set mom's gene to female selected
+  $('.key-XX').eq(1).parent().children().removeClass('btn-info');
+  $('.key-XX').eq(1).addClass('btn-info');
+
 }
 
 function table(){
@@ -138,8 +148,11 @@ function events(){
     displayChild();
   });
 
-  window.onkeyup = function(){
-    run();
+  window.onkeyup = function(e){
+    if(e.which == 13){
+      run();
+      e.preventDefault();
+    }
   };
 
   $('body').click(function(){

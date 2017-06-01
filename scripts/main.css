@@ -189,7 +189,7 @@ canvas {
   }
 
   .complete .bar {
-    bottom: -10px;
+    bottom: -20px;
   }
 
   @keyframes loadingbar {
