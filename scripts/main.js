@@ -263,7 +263,7 @@ function render(geno){
   lay('nose-' + t(geno[17]));
 
   //freckles
-  if(geno[18] == "ff"){
+  if(geno[18] == "FF" || geno[18] == "Ff"){
     lay('freckles');
   }
 
