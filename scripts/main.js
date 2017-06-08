@@ -252,7 +252,7 @@ function render(geno){
   lay('mouth-male-' + t(geno[13]) + "-" + t(geno[14]));
 
   //dimples
-  if(geno[15] == "dd"){
+  if(geno[15] == "Dd" || geno[15] == "DD"){
     lay('dimples');
   }
 
